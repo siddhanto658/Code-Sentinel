@@ -1,0 +1,5 @@
+{
+  "name": "CodeSentinel",
+  "description": "An AI-powered secure code auditor that analyzes code for vulnerabilities, explains exploits, and auto-generates fixes using Gemini.",
+  "requestFramePermissions": []
+}
