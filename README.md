@@ -98,4 +98,10 @@ MIT License
 
 ---
 
+## Example Output
+
+![CodeSentinel Example](Screenshot%202026-02-22%20205051.png)
+
+---
+
 Built with ❤️ by [siddhanto658](https://github.com/siddhanto658)
