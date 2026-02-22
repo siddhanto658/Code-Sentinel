@@ -1,17 +1,8 @@
-<div align="center">
-<img width="1200" height="475" alt="CodeSentinel Banner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-
 # CodeSentinel
 
 AI-powered code vulnerability scanner that analyzes code for security issues and provides remediation suggestions.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![React](https://img.shields.io/badge/React-19.x-61DAFB)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6)](https://www.typescriptlangUses.org)
-
-** OpenRouter for free AI inference** 🚀
-
-</div>
+**OpenRouter for free AI inference**
 
 ## Features
 
@@ -34,11 +25,8 @@ AI-powered code vulnerability scanner that analyzes code for security issues and
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/siddhanto658/Code-Sentinel.git
 cd Code-Sentinel
-
-# Install dependencies
 npm install
 ```
 
@@ -104,21 +92,13 @@ npm run build
 ```
 Code-Sentinel/
 ├── src/
-│   ├── components/       # React components
-│   │   ├── CodeBlock.tsx
-│   │   ├── Icons.tsx
-│   │   └── VulnerabilityCard.tsx
+│   ├── components/
 │   ├── data/
-│   │   └── demoExamples.ts
 │   ├── services/
-│   │   └── openRouterService.ts
 │   ├── App.tsx
-│   ├── types.ts
-│   └── main.tsx
+│   └── types.ts
 ├── .env.example
-├── index.html
-├── package.json
-└── vite.config.ts
+└── package.json
 ```
 
 ## Environment Variables
@@ -131,10 +111,10 @@ Code-Sentinel/
 
 You can change the model in `services/openRouterService.ts`. Popular free options:
 
-- `meta-llama/llama-3.1-8b-instruct` (Default - Recommended)
+- `meta-llama/llama-3.1-8b-instruct` (Default)
 - `google/gemma-2-9b-it`
 - `mistralai/mistral-7b-instruct`
 
 ## License
 
-MIT License - feel free to use for personal and commercial projects.
+MIT License
