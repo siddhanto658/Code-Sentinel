@@ -7,13 +7,16 @@ AI-powered code vulnerability scanner that analyzes code for security issues and
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-19.x-61DAFB)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6)](https://www.typescriptlang.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6)](https://www.typescriptlangUses.org)
+
+** OpenRouter for free AI inference** 🚀
 
 </div>
 
 ## Features
 
-- **AI-Powered Analysis** - Uses Google Gemini for intelligent vulnerability detection
+- **AI-Powered Analysis** - Uses OpenRouter (Llama 3.1) for intelligent vulnerability detection
+- **Free API** - No credit card required, generous free tier
 - **Hacker Mode** - Red team perspective for aggressive security testing
 - **Demo Examples** - Pre-loaded vulnerable code samples for testing
 - **Scan History** - Automatic saving of previous scans
@@ -26,7 +29,7 @@ AI-powered code vulnerability scanner that analyzes code for security issues and
 ### Prerequisites
 
 - Node.js 18+
-- Google Gemini API Key
+- OpenRouter API Key (Free!)
 
 ### Installation
 
@@ -46,12 +49,14 @@ npm install
 cp .env.example .env
 ```
 
-2. Add your Gemini API key to `.env`:
+2. Add your OpenRouter API key to `.env`:
 ```
-VITE_GEMINI_API_KEY=your_api_key_here
+VITE_OPENROUTER_API_KEY=your_api_key_here
 ```
 
-Get your API key from: https://aistudio.google.com/app/apikey
+Get your free API key from: https://openrouter.ai/settings/api-keys
+
+> **Note:** OpenRouter provides free credits for new users. No credit card required!
 
 ### Run Development Server
 
@@ -91,7 +96,7 @@ npm run build
 
 - **Frontend:** React 19, TypeScript
 - **Build Tool:** Vite
-- **AI:** Google Gemini API
+- **AI:** OpenRouter (Llama 3.1 8B - Free)
 - **Styling:** Custom CSS (Cyberpunk theme)
 
 ## Project Structure
@@ -106,7 +111,7 @@ Code-Sentinel/
 │   ├── data/
 │   │   └── demoExamples.ts
 │   ├── services/
-│   │   └── geminiService.ts
+│   │   └── openRouterService.ts
 │   ├── App.tsx
 │   ├── types.ts
 │   └── main.tsx
@@ -120,7 +125,15 @@ Code-Sentinel/
 
 | Variable | Description |
 |----------|-------------|
-| `VITE_GEMINI_API_KEY` | Google Gemini API key (required) |
+| `VITE_OPENROUTER_API_KEY` | OpenRouter API key (required) |
+
+## Available Models
+
+You can change the model in `services/openRouterService.ts`. Popular free options:
+
+- `meta-llama/llama-3.1-8b-instruct` (Default - Recommended)
+- `google/gemma-2-9b-it`
+- `mistralai/mistral-7b-instruct`
 
 ## License
 
