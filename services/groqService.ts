@@ -1,6 +1,6 @@
 import { SecurityReport } from "../types";
 
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const vulnerabilitySchema = {
   type: "object",
@@ -30,9 +30,9 @@ const reportSchema = {
 };
 
 export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Promise<SecurityReport> => {
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
   if (!apiKey) {
-    throw new Error("API Key not found. Please set VITE_OPENROUTER_API_KEY in your .env file.");
+    throw new Error("API Key not found. Please set VITE_GROQ_API_KEY in your .env file.");
   }
 
   const persona = hackerMode 
@@ -71,25 +71,20 @@ export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Pr
   `;
 
   try {
-    const response = await fetch(OPENROUTER_API_URL, {
+    const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": window.location.origin || "http://localhost:5173",
-        "X-Title": "CodeSentinel"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3.1-8b-instruct", // Free model on OpenRouter
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: persona },
           { role: "user", content: prompt }
         ],
-        response_format: {
-          type: "json_schema",
-          json_schema: reportSchema
-        },
-        temperature: 0.1
+        temperature: 0.1,
+        max_tokens: 8192
       })
     });
 
@@ -101,11 +96,16 @@ export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Pr
     const data = await response.json();
     const content = data.choices[0].message.content;
     
-    const report = JSON.parse(content) as SecurityReport;
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("Invalid response format from API");
+    }
+    
+    const report = JSON.parse(jsonMatch[0]) as SecurityReport;
     return report;
 
   } catch (error) {
-    console.error("OpenRouter Analysis Error:", error);
+    console.error("Groq Analysis Error:", error);
     throw error;
   }
 };

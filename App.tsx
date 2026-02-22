@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { analyzeCodeSecurity } from './services/openRouterService';
+import { analyzeCodeSecurity } from './services/groqService';
 import { AppState, AnalysisStatus, Vulnerability } from './types';
 import { ShieldCheck, ShieldAlert, Loader2, Code2, Upload, ArrowRightLeft, History, ChevronDown } from './components/Icons';
 import CodeBlock from './components/CodeBlock';

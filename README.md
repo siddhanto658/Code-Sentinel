@@ -2,12 +2,12 @@
 
 AI-powered code vulnerability scanner that analyzes code for security issues and provides remediation suggestions.
 
-**OpenRouter for free AI inference**
+**Powered by Groq - Ultra-fast free AI inference**
 
 ## Features
 
-- **AI-Powered Analysis** - Uses OpenRouter (Llama 3.1) for intelligent vulnerability detection
-- **Free API** - No credit card required, generous free tier
+- **AI-Powered Analysis** - Uses Groq (Llama 3.3) for intelligent vulnerability detection
+- **Free API** - No credit card required, ultra-fast free tier
 - **Hacker Mode** - Red team perspective for aggressive security testing
 - **Demo Examples** - Pre-loaded vulnerable code samples for testing
 - **Scan History** - Automatic saving of previous scans
@@ -20,7 +20,7 @@ AI-powered code vulnerability scanner that analyzes code for security issues and
 ### Prerequisites
 
 - Node.js 18+
-- OpenRouter API Key (Free!)
+- Groq API Key (Free!)
 
 ### Installation
 
@@ -37,14 +37,14 @@ npm install
 cp .env.example .env
 ```
 
-2. Add your OpenRouter API key to `.env`:
+2. Add your Groq API key to `.env`:
 ```
-VITE_OPENROUTER_API_KEY=your_api_key_here
+VITE_GROQ_API_KEY=your_api_key_here
 ```
 
-Get your free API key from: https://openrouter.ai/settings/api-keys
+Get your free API key from: https://console.groq.com/keys
 
-> **Note:** OpenRouter provides free credits for new users. No credit card required!
+> **Note:** Groq provides free inference with no credit card required!
 
 ### Run Development Server
 
@@ -84,8 +84,8 @@ npm run build
 
 - **Frontend:** React 19, TypeScript
 - **Build Tool:** Vite
-- **AI:** OpenRouter (Llama 3.1 8B - Free)
-- **Styling:** Custom CSS (Cyberpunk theme)
+- **AI:** Groq (Llama 3.3 70B - Free)
+- **Styling:** Tailwind CSS (Cyberpunk theme)
 
 ## Project Structure
 
@@ -105,15 +105,15 @@ Code-Sentinel/
 
 | Variable | Description |
 |----------|-------------|
-| `VITE_OPENROUTER_API_KEY` | OpenRouter API key (required) |
+| `VITE_GROQ_API_KEY` | Groq API key (required) |
 
 ## Available Models
 
-You can change the model in `services/openRouterService.ts`. Popular free options:
+You can change the model in `services/groqService.ts`. Popular free options:
 
-- `meta-llama/llama-3.1-8b-instruct` (Default)
-- `google/gemma-2-9b-it`
-- `mistralai/mistral-7b-instruct`
+- `llama-3.3-70b-versatile` (Default - Recommended)
+- `llama-3.1-70b-versatile`
+- `mixtral-8x7b-32768`
 
 ## License
 
