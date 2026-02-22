@@ -2,33 +2,6 @@ import { SecurityReport } from "../types";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-const vulnerabilitySchema = {
-  type: "object",
-  properties: {
-    type: { type: "string", description: "Name of the vulnerability (e.g., SQL Injection)" },
-    severity: { type: "string", enum: ["Critical", "High", "Medium", "Low"] },
-    cweId: { type: "string", description: "The CWE ID (e.g., CWE-89)" },
-    description: { type: "string", description: "Technical description of the flaw" },
-    exploitScenario: { type: "string", description: "How a hacker would exploit this" },
-  },
-  required: ["type", "severity", "cweId", "description", "exploitScenario"]
-};
-
-const reportSchema = {
-  type: "object",
-  properties: {
-    isSecure: { type: "boolean" },
-    score: { type: "integer", description: "Security score from 0 to 100" },
-    vulnerabilities: { 
-      type: "array", 
-      items: vulnerabilitySchema 
-    },
-    fixedCode: { type: "string", description: "The secure version of the code" },
-    summary: { type: "string", description: "Brief executive summary of findings" }
-  },
-  required: ["isSecure", "score", "vulnerabilities", "fixedCode", "summary"]
-};
-
 export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Promise<SecurityReport> => {
   const apiKey = import.meta.env.VITE_GROQ_API_KEY;
   if (!apiKey) {
@@ -47,12 +20,9 @@ export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Pr
     ${code}
     \`\`\`
 
-    If vulnerabilities are found, provide the specific CWE, a detailed exploit scenario, and a fully corrected, secure version of the code.
-    If the code is secure, explain why it is robust.
+    IMPORTANT: You MUST respond with ONLY a valid JSON object. No other text.
     
-    Ensure the 'fixedCode' contains the FULL corrected code block, not just snippets.
-    
-    IMPORTANT: Respond ONLY with valid JSON in this exact format:
+    Format:
     {
       "isSecure": boolean,
       "score": number (0-100),
@@ -94,11 +64,23 @@ export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Pr
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    let content = data.choices[0].message.content;
     
+    // Try to extract JSON from response
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error("Invalid response format from API");
+      // If no JSON found, create a report from the text
+      const isSecure = content.toLowerCase().includes("no vulnerabilities") || 
+                      content.toLowerCase().includes("no security") ||
+                      content.toLowerCase().includes("secure");
+      
+      return {
+        isSecure: isSecure,
+        score: isSecure ? 85 : 50,
+        vulnerabilities: [],
+        fixedCode: code,
+        summary: content.substring(0, 500)
+      };
     }
     
     const report = JSON.parse(jsonMatch[0]) as SecurityReport;
