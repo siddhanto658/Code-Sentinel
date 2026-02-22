@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { analyzeCodeSecurity } from './services/geminiService';
-import { AppState, AnalysisStatus } from './types';
-import { ShieldCheck, ShieldAlert, Loader2, Code2, Upload, ArrowRightLeft } from './components/Icons';
+import { AppState, AnalysisStatus, Vulnerability } from './types';
+import { ShieldCheck, ShieldAlert, Loader2, Code2, Upload, ArrowRightLeft, History, ChevronDown } from './components/Icons';
 import CodeBlock from './components/CodeBlock';
 import VulnerabilityCard from './components/VulnerabilityCard';
+import { demoExamples } from './data/demoExamples';
 
 const INITIAL_CODE_PLACEHOLDER = `# Python Example: Insecure Login
 import sqlite3
@@ -27,10 +28,69 @@ const App: React.FC = () => {
     status: AnalysisStatus.IDLE,
     report: null,
     error: null,
-    hackerMode: false
+    hackerMode: false,
+    history: []
   });
 
+  const [showDemoDropdown, setShowDemoDropdown] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [activeTab, setActiveTab] = useState<'report' | 'fix' | 'diff'>('report');
+
+  useEffect(() => {
+    const savedCode = localStorage.getItem('codesentinel_code');
+    const savedHistory = localStorage.getItem('codesentinel_history');
+    if (savedCode) {
+      setState(prev => ({ ...prev, code: savedCode }));
+    }
+    if (savedHistory) {
+      setState(prev => ({ ...prev, history: JSON.parse(savedHistory) }));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('codesentinel_code', state.code);
+  }, [state.code]);
+
+  const saveToHistory = (report: any) => {
+    const historyItem: HistoryItem = {
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      code: state.code,
+      fileName: state.fileName,
+      isSecure: report.isSecure,
+      score: report.score,
+      vulnerabilityCount: report.vulnerabilities.length,
+      hackerMode: state.hackerMode
+    };
+    const newHistory = [historyItem, ...state.history].slice(0, 20);
+    setState(prev => ({ ...prev, history: newHistory }));
+    localStorage.setItem('codesentinel_history', JSON.stringify(newHistory));
+  };
+
+  const handleDemoSelect = (demo: any) => {
+    setState(prev => ({
+      ...prev,
+      code: demo.code,
+      fileName: `demo_${demo.id}.${demo.language === 'javascript' ? 'js' : 'py'}`,
+      status: AnalysisStatus.IDLE,
+      report: null,
+      error: null
+    }));
+    setShowDemoDropdown(false);
+  };
+
+  const loadFromHistory = (item: HistoryItem) => {
+    setState(prev => ({
+      ...prev,
+      code: item.code,
+      fileName: item.fileName,
+      status: AnalysisStatus.IDLE,
+      report: null,
+      error: null,
+      hackerMode: item.hackerMode
+    }));
+    setShowHistory(false);
+  };
 
   const handleScan = async () => {
     if (!state.code.trim()) return;
@@ -40,6 +100,7 @@ const App: React.FC = () => {
     try {
       const report = await analyzeCodeSecurity(state.code, state.hackerMode);
       setState(prev => ({ ...prev, status: AnalysisStatus.COMPLETE, report }));
+      saveToHistory(report);
     } catch (err: any) {
       setState(prev => ({ 
         ...prev, 
@@ -82,6 +143,71 @@ const App: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-4">
+            <div className="relative">
+              <button 
+                onClick={() => setShowDemoDropdown(!showDemoDropdown)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded bg-cyber-gray hover:bg-gray-700 text-xs text-white transition-colors"
+              >
+                <Code2 className="w-3 h-3" />
+                Demo Examples
+                <ChevronDown className={`w-3 h-3 transition-transform ${showDemoDropdown ? 'rotate-180' : ''}`} />
+              </button>
+              {showDemoDropdown && (
+                <div className="absolute top-full mt-1 right-0 w-56 bg-cyber-dark border border-cyber-gray rounded-lg shadow-xl z-50 overflow-hidden">
+                  {demoExamples.map(demo => (
+                    <button
+                      key={demo.id}
+                      onClick={() => handleDemoSelect(demo)}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-cyber-gray transition-colors flex items-center justify-between"
+                    >
+                      <span className="text-white">{demo.name}</span>
+                      <span className="text-xs text-cyber-dim">{demo.language}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="relative">
+              <button 
+                onClick={() => setShowHistory(!showHistory)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded bg-cyber-gray hover:bg-gray-700 text-xs text-white transition-colors"
+              >
+                <History className="w-3 h-3" />
+                History ({state.history.length})
+              </button>
+              {showHistory && (
+                <div className="absolute top-full mt-1 right-0 w-72 bg-cyber-dark border border-cyber-gray rounded-lg shadow-xl z-50 overflow-hidden max-h-80 overflow-y-auto">
+                  {state.history.length === 0 ? (
+                    <div className="px-4 py-3 text-sm text-cyber-dim">No scan history yet</div>
+                  ) : (
+                    state.history.map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => loadFromHistory(item)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-cyber-gray transition-colors border-b border-cyber-gray/30"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-white truncate">{item.fileName}</span>
+                          <span className={`text-xs ${item.isSecure ? 'text-cyber-success' : 'text-cyber-danger'}`}>
+                            {item.score}/100
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs text-cyber-dim">
+                            {new Date(item.timestamp).toLocaleDateString()}
+                          </span>
+                          <span className="text-xs text-cyber-dim">
+                            {item.vulnerabilityCount} issues
+                          </span>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
             <label className="flex items-center cursor-pointer gap-2 group">
               <div className="relative">
                 <input 

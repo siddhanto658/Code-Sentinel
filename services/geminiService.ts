@@ -30,9 +30,9 @@ const reportSchema: Schema = {
 };
 
 export const analyzeCodeSecurity = async (code: string, hackerMode: boolean): Promise<SecurityReport> => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("API Key not found. Please set REACT_APP_GEMINI_API_KEY.");
+    throw new Error("API Key not found. Please set VITE_GEMINI_API_KEY in your .env file.");
   }
 
   const ai = new GoogleGenAI({ apiKey });

@@ -21,6 +21,17 @@ export enum AnalysisStatus {
   ERROR = 'ERROR'
 }
 
+export interface HistoryItem {
+  id: string;
+  timestamp: number;
+  code: string;
+  fileName: string;
+  isSecure: boolean;
+  score: number;
+  vulnerabilityCount: number;
+  hackerMode: boolean;
+}
+
 export interface AppState {
   code: string;
   fileName: string;
@@ -28,4 +39,5 @@ export interface AppState {
   report: SecurityReport | null;
   error: string | null;
   hackerMode: boolean;
+  history: HistoryItem[];
 }
